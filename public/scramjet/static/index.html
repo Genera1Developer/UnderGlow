@@ -1,4 +1,4 @@
-<!doctype html>
+<!-- <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
@@ -59,7 +59,7 @@
 		<script src="config.js"></script>
 		<script src="ui.js" defer></script>
 	</body>
-</html> 
+</html> -->
 
 <!-- <html>
 	<head>
@@ -100,3 +100,1035 @@ iframe {
         </div>
 	</body>
 </html> -->
+
+<!DOCTYPE html> <!-- JUST A TEST -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scramjet</title>
+    <link rel="icon" href="favicon.webp" />
+    <link rel="prefetch" href="/scram/scramjet.worker.js" />
+    <link rel="prefetch" href="/scram/scramjet.shared.js" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&amp;family=Inter+Tight:ital,wght@0,100..900;1,100..900&amp;family=Inter:wght@100..900&amp;display=swap&amp;"
+        rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet"
+    />
+    <style>
+        body,
+        html {
+            font-family:
+                "Inter",
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                sans-serif;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            animation: fade 0.5s ease-in-out;
+        }
+
+        .top-half {
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 2px solid #444;
+            overflow: hidden;
+        }
+
+        .bottom-half {
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .search-container {
+            background: #111;
+            padding: 8px 16px;
+            border-bottom: 1px solid #222;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 24px;
+            padding: 8px 16px;
+            margin: 8px 0;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-button {
+            background: transparent;
+            border: none;
+            color: #4285f4;
+            font-weight: 500;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .search-button:hover {
+            background: rgba(66, 133, 244, 0.1);
+        }
+
+        .search-results {
+            flex: 1;
+            background: #0f0f0f;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .result-item {
+            margin-bottom: 16px;
+            animation: fade 0.3s ease-in-out;
+        }
+
+        .result-title {
+            color: #8ab4f8;
+            font-size: 18px;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+
+        .result-title:hover {
+            text-decoration: underline;
+        }
+
+        .result-url {
+            color: #5f6368;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .result-description {
+            color: #bdc1c6;
+            font-size: 14px;
+        }
+
+        .no-results {
+            color: #bdc1c6;
+            text-align: center;
+            padding: 16px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: #111111;
+            border-bottom: 1px solid #222;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .logo img {
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .proxy-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .proxy-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4caf50;
+        }
+
+        .button {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #eee;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .button:hover {
+            background: #2a2a2a;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #0a0a0a;
+            border-right: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            padding: 12px;
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            padding: 0 4px;
+        }
+
+        .proxy-item {
+            padding: 6px 8px;
+            background: #111;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .proxy-item:hover {
+            background: #1a1a1a;
+        }
+
+        .proxy-item.active {
+            background: #2a2a2a;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .proxy-log {
+            flex: 1;
+            background: #0d0d0d;
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 12px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #ddd;
+        }
+
+        .log-entry {
+            margin-bottom: 3px;
+            display: flex;
+        }
+
+        .log-timestamp {
+            color: #888;
+            margin-right: 8px;
+            flex-shrink: 0;
+            width: 80px;
+        }
+
+        .log-type {
+            flex-shrink: 0;
+            width: 60px;
+            margin-right: 8px;
+        }
+
+        .log-type.info {
+            color: #4caf50;
+        }
+
+        .log-type.warning {
+            color: #ff9800;
+        }
+
+        .log-type.error {
+            color: #f44336;
+        }
+
+        .log-type.debug {
+            color: #2196f3;
+        }
+
+        .log-message {
+            word-break: break-word;
+        }
+
+        .input-container {
+            padding: 8px 12px;
+            background: #0f0f0f;
+            border-top: 1px solid #222;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 8px 10px;
+            border-radius: 4px;
+            outline: none;
+            font-size: 0.85rem;
+        }
+
+        .input-field:focus {
+            border-color: #555;
+        }
+
+        .send-btn {
+            margin-left: 8px;
+            background: #2a2a2a;
+            border: none;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+
+        .send-btn:hover {
+            background: #3a3a3a;
+        }
+
+        .status-bar {
+            padding: 6px 12px;
+            background: #111;
+            border-top: 1px solid #222;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #888;
+            align-items: center;
+        }
+
+        .tabs {
+            display: flex;
+            background: #0f0f0f;
+            border-bottom: 1px solid #222;
+            padding: 0 8px;
+        }
+
+        .tab {
+            padding: 8px 12px;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            color: #ccc;
+        }
+
+        .tab.active {
+            color: #fff;
+            border-bottom-color: #4caf50;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-value {
+            color: #ccc;
+        }
+
+        .resizer {
+            height: 6px;
+            background: #222;
+            cursor: ns-resize;
+            position: relative;
+        }
+
+        .resizer:hover {
+            background: #444;
+        }
+
+        .resizer::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 2px;
+            background: #666;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 180px;
+                border-right: none;
+                border-bottom: 1px solid #222;
+            }
+            
+            .top-half, .bottom-half {
+                height: auto;
+            }
+            
+            #app {
+                height: auto;
+                min-height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Top Half - Search and Results -->
+        <div class="top-half" id="top-section">
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="search-input" placeholder="Search the web or proxy logs..." />
+                    <button class="search-button" id="search-button">Search</button>
+                </div>
+            </div>
+            <div class="search-results" id="search-results">
+                <div class="no-results">Enter a search query to begin</div>
+            </div>
+        </div>
+        
+        <!-- Resizer -->
+        <div class="resizer" id="resizer"></div>
+        
+        <!-- Bottom Half - Original Scramjet UI -->
+        <div class="bottom-half" id="bottom-section">
+            <div class="header">
+                <div class="logo">
+                    <img src="favicon.webp" alt="Scramjet Logo" /> Scramjet
+                </div>
+                <div class="proxy-controls">
+                    <div class="proxy-status">
+                        <span class="status-dot"></span>
+                        Active
+                    </div>
+                    <button class="button" id="toggle-proxy">Pause Proxy</button>
+                    <button class="button" id="clear-logs">Clear Logs</button>
+                </div>
+            </div>
+
+            <div class="main-container">
+                <div class="sidebar">
+                    <div class="sidebar-section">
+                        <div class="sidebar-title">Proxy Routes</div>
+                        <div class="proxy-item active">
+                            /api/* → example.com/api
+                        </div>
+                        <div class="proxy-item">
+                            /assets/* → cdn.example.com
+                        </div>
+                        <div class="proxy-item">
+                            /auth/* → auth.example.com
+                        </div>
+                        <div class="proxy-item">
+                            Add New Route...
+                        </div>
+                    </div>
+                    <div class="sidebar-section">
+                        <div class="sidebar-title">Settings</div>
+                        <div class="proxy-item">
+                            Cache Configuration
+                        </div>
+                        <div class="proxy-item">
+                            Request Throttling
+                        </div>
+                        <div class="proxy-item">
+                            Headers & Cookies
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <div class="tabs">
+                        <div class="tab active">Logs</div>
+                        <div class="tab">Requests</div>
+                        <div class="tab">Performance</div>
+                        <div class="tab">Config</div>
+                    </div>
+
+                    <div class="proxy-log" id="log-container">
+                        <!-- Log entries will be populated dynamically -->
+                    </div>
+
+                    <div class="input-container">
+                        <input type="text" class="input-field" placeholder="Enter command or filter logs..." id="command-input" />
+                        <button class="send-btn" id="send-command">Execute</button>
+                    </div>
+
+                    <div class="status-bar">
+                        <div class="stats-container" id="stats-display">
+                            <div class="stat-item">
+                                <span>Requests:</span>
+                                <span class="stat-value" id="request-count">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Cache Hit:</span>
+                                <span class="stat-value" id="cache-hit-ratio">0%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Avg Response:</span>
+                                <span class="stat-value" id="avg-response">0ms</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Memory:</span>
+                                <span class="stat-value" id="memory-usage">0MB</span>
+                            </div>
+                        </div>
+                        <div id="uptime">Uptime: 0:00:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Original scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/dreamland"></script>
+    <script src="/baremux/index.js"></script>
+    <script src="/scram/scramjet.controller.js"></script>
+    <script src="config.js"></script>
+    
+    <script>
+        // UI Controller for Scramjet Web Proxy
+        class ScramjetUI {
+            constructor() {
+                this.proxyActive = true;
+                this.startTime = new Date();
+                this.requests = 0;
+                this.cacheHits = 0;
+                this.responseTimes = [];
+                this.logEntries = [];
+                this.maxLogs = 500;
+                
+                // Initialize DOM references
+                this.logContainer = document.getElementById('log-container');
+                this.commandInput = document.getElementById('command-input');
+                this.sendButton = document.getElementById('send-command');
+                this.toggleButton = document.getElementById('toggle-proxy');
+                this.clearLogsButton = document.getElementById('clear-logs');
+                this.requestCountElement = document.getElementById('request-count');
+                this.cacheHitRatioElement = document.getElementById('cache-hit-ratio');
+                this.avgResponseElement = document.getElementById('avg-response');
+                this.memoryUsageElement = document.getElementById('memory-usage');
+                this.uptimeElement = document.getElementById('uptime');
+                
+                // Search components
+                this.searchInput = document.getElementById('search-input');
+                this.searchButton = document.getElementById('search-button');
+                this.searchResults = document.getElementById('search-results');
+                this.resizer = document.getElementById('resizer');
+                this.topSection = document.getElementById('top-section');
+                this.bottomSection = document.getElementById('bottom-section');
+                
+                // Initialize tabs
+                this.tabs = document.querySelectorAll('.tab');
+                
+                // Setup event listeners
+                this.setupEventListeners();
+                
+                // Load initial stats
+                this.updateStats();
+                
+                // Start timers
+                this.startTimers();
+                
+                // Generate some initial logs
+                this.generateInitialLogs();
+            }
+            
+            setupEventListeners() {
+                // Command input
+                this.sendButton.addEventListener('click', () => this.executeCommand());
+                this.commandInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.executeCommand();
+                });
+                
+                // Toggle proxy
+                this.toggleButton.addEventListener('click', () => this.toggleProxy());
+                
+                // Clear logs
+                this.clearLogsButton.addEventListener('click', () => this.clearLogs());
+                
+                // Tab switching
+                this.tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        this.tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        this.addLog('info', `Switched to ${tab.textContent} view`);
+                    });
+                });
+                
+                document.querySelectorAll('.proxy-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        if (item.textContent.trim() === 'Add New Route...') {
+                            this.addLog('info', 'Route editor would open here');
+                            return;
+                        }
+                        
+                        document.querySelectorAll('.proxy-item').forEach(i => {
+                            i.classList.remove('active');
+                        });
+                        item.classList.add('active');
+                        
+                        const routeText = item.textContent.trim();
+                        this.addLog('info', `Selected route: ${routeText}`);
+                    });
+                });
+                
+                this.searchButton.addEventListener('click', () => this.performSearch());
+                this.searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.performSearch();
+                });
+                let isResizing = false;
+                let startY;
+                let startTopHeight;
+                
+                this.resizer.addEventListener('mousedown', (e) => {
+                    isResizing = true;
+                    startY = e.clientY;
+                    startTopHeight = this.topSection.offsetHeight;
+                    
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', () => {
+                        isResizing = false;
+                        document.removeEventListener('mousemove', onMouseMove);
+                    }, { once: true });
+                });
+                
+                const onMouseMove = (e) => {
+                    if (!isResizing) return;
+                    
+                    const deltaY = e.clientY - startY;
+                    const newTopHeight = startTopHeight + deltaY;
+                    const containerHeight = this.topSection.parentElement.offsetHeight;
+                    if (newTopHeight < 100 || newTopHeight > containerHeight - 100) return;
+                    
+                    const topPercent = (newTopHeight / containerHeight) * 100;
+                    const bottomPercent = 100 - topPercent;
+                    
+                    this.topSection.style.height = `${topPercent}%`;
+                    this.bottomSection.style.height = `${bottomPercent}%`;
+                };
+            }
+            
+            startTimers() {
+                setInterval(() => this.updateStats(), 2000);
+                setInterval(() => this.generateRandomEvent(), 3000 + Math.random() * 5000);
+                setInterval(() => this.simulateRequest(), 1000 + Math.random() * 3000);
+            }
+            
+            updateStats() {
+                this.requestCountElement.textContent = this.requests;
+                const hitRatio = this.requests > 0 ? Math.round((this.cacheHits / this.requests) * 100) : 0;
+                this.cacheHitRatioElement.textContent = `${hitRatio}%`;
+                const avgTime = this.responseTimes.length > 0 
+                    ? Math.round(this.responseTimes.reduce((a, b) => a + b, 0) / this.responseTimes.length) 
+                    : 0;
+                this.avgResponseElement.textContent = `${avgTime}ms`;
+                const memoryUsage = Math.round(50 + Math.sin(Date.now() / 10000) * 20);
+                this.memoryUsageElement.textContent = `${memoryUsage}MB`;
+                const now = new Date();
+                const diff = Math.floor((now - this.startTime) / 1000);
+                const hours = Math.floor(diff / 3600);
+                const minutes = Math.floor((diff % 3600) / 60);
+                const seconds = diff % 60;
+                this.uptimeElement.textContent = `Uptime: ${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            addLog(type, message) {
+                const now = new Date();
+                const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                
+                const timestampSpan = document.createElement('span');
+                timestampSpan.className = 'log-timestamp';
+                timestampSpan.textContent = timestamp;
+                
+                const typeSpan = document.createElement('span');
+                typeSpan.className = `log-type ${type}`;
+                typeSpan.textContent = type.toUpperCase();
+                
+                const messageSpan = document.createElement('span');
+                messageSpan.className = 'log-message';
+                messageSpan.textContent = message;
+                
+                logEntry.appendChild(timestampSpan);
+                logEntry.appendChild(typeSpan);
+                logEntry.appendChild(messageSpan);
+                
+                this.logContainer.appendChild(logEntry);
+                
+                // Keep log history limited
+                this.logEntries.push({type, message, timestamp});
+                if (this.logEntries.length > this.maxLogs) {
+                    this.logEntries.shift();
+                    if (this.logContainer.children.length > this.maxLogs) {
+                        this.logContainer.removeChild(this.logContainer.children[0]);
+                    }
+                }
+                
+                this.logContainer.scrollTop = this.logContainer.scrollHeight;
+            }
+            
+            executeCommand() {
+                const command = this.commandInput.value.trim();
+                if (!command) return;
+                
+                this.addLog('info', `> ${command}`);
+                if (command === 'help') {
+                    this.addLog('info', 'Available commands: help, status, clear, routes, cache flush');
+                } else if (command === 'status') {
+                    this.addLog('info', `Proxy Status: ${this.proxyActive ? 'Active' : 'Paused'}`);
+                    this.addLog('info', `Requests Processed: ${this.requests}`);
+                    this.addLog('info', `Cache Hit Ratio: ${this.cacheHitRatioElement.textContent}`);
+                } else if (command === 'clear') {
+                    this.clearLogs();
+                } else if (command === 'routes') {
+                    this.addLog('info', 'Current routes:');
+                    this.addLog('info', '  /api/* → example.com/api');
+                    this.addLog('info', '  /assets/* → cdn.example.com');
+                    this.addLog('info', '  /auth/* → auth.example.com');
+                } else if (command === 'cache flush') {
+                    this.addLog('info', 'Cache flushed successfully');
+                } else if (command === 'search') {
+                    this.addLog('info', 'Use the search bar at the top to search');
+                    this.searchInput.focus();
+                } else {
+                    if (window.ScramjetController && typeof window.ScramjetController.processCommand === 'function') {
+                        try {
+                            window.ScramjetController.processCommand(command);
+                            this.addLog('info', 'Command processed by Scramjet controller');
+                        } catch (err) {
+                            this.addLog('error', `Command error: ${err.message || 'Unknown error'}`);
+                        }
+                    } else {
+                        this.addLog('warning', `Unknown command: ${command}`);
+                    }
+                }
+                
+                this.commandInput.value = '';
+            }
+            
+            toggleProxy() {
+                this.proxyActive = !this.proxyActive;
+                this.toggleButton.textContent = this.proxyActive ? 'Pause Proxy' : 'Resume Proxy';
+                
+                const statusDot = document.querySelector('.status-dot');
+                statusDot.style.backgroundColor = this.proxyActive ? '#4caf50' : '#f44336';
+                
+                const statusText = document.querySelector('.proxy-status').childNodes[1];
+                statusText.textContent = this.proxyActive ? 'Active' : 'Paused';
+                
+                this.addLog(this.proxyActive ? 'info' : 'warning', 
+                    `Proxy ${this.proxyActive ? 'resumed' : 'paused'}`);
+            }
+            
+            clearLogs() {
+                this.logContainer.innerHTML = '';
+                this.logEntries = [];
+                this.addLog('info', 'Logs cleared');
+            }
+            
+            performSearch() {
+                const query = this.searchInput.value.trim();
+                if (!query) return;
+                
+                this.searchResults.innerHTML = '';
+                
+                const loadingElement = document.createElement('div');
+                loadingElement.className = 'no-results';
+                loadingElement.textContent = 'Searching...';
+                this.searchResults.appendChild(loadingElement);
+                this.addLog('info', `Search query: "${query}"`);
+                setTimeout(() => {
+                    this.displaySearchResults(query);
+                }, 500 + Math.random() * 1000);
+            }
+            
+            displaySearchResults(query) {
+                this.searchResults.innerHTML = '';
+                const resultCount = 5 + Math.floor(Math.random() * 5);
+                
+                if (query.toLowerCase().includes('proxy') || 
+                    query.toLowerCase().includes('scramjet')) {
+                    this.generateProxyResults(query);
+                } else {
+                    this.generateWebResults(query, resultCount);
+                }
+                
+                this.requests += resultCount;
+                this.cacheHits += Math.floor(Math.random() * resultCount * 0.4);
+                const avgResponseTime = 100 + Math.floor(Math.random() * 200);
+                
+                for (let i = 0; i < resultCount; i++) {
+                    this.responseTimes.push(avgResponseTime + Math.floor(Math.random() * 100 - 50));
+                }
+                
+                if (this.responseTimes.length > 100) {
+                    this.responseTimes = this.responseTimes.slice(-100);
+                }
+            }
+            
+            generateProxyResults(query) {
+                const results = [
+                    {
+                        title: "Scramjet Proxy Documentation",
+                        url: "https://docs.scramjet.org/proxy/overview",
+                        description: "Official documentation for Scramjet Proxy. Learn how to set up routes, configure caching, and optimize performance."
+                    },
+                    {
+                        title: "Mercury Workshop - Scramjet Proxy",
+                        url: "https://mercuryworkshop.com",
+			    description: "Mercury Workshop offers Scramjet, a high-performance web proxy for bypassing content filters and accessing blocked websites."
+                    },
+                    {
+                        title: "Advanced Proxy Configuration Tutorial",
+                        url: "https://scramjet.mercurywork.shop/tutorials/advanced",
+                        description: "Learn advanced techniques for configuring your Scramjet proxy, including custom header manipulation, response transformation, and load balancing."
+                    },
+                    {
+                        title: "Web Proxy Security Best Practices",
+                        url: "https://security.scramjet.org/best-practices",
+                        description: "Comprehensive guide to securing your proxy deployment. Protect against common attacks and ensure your proxy infrastructure remains robust."
+                    },
+                    {
+                        title: "Scramjet API Reference",
+                        url: "https://api.scramjet.org/reference",
+                        description: "Complete API reference for Scramjet proxy, including all configuration options, command-line interface, and programmatic usage."
+                    }
+                ];
+                
+                this.addResultsToDOM(results);
+            }
+            
+            generateWebResults(query, count) {
+                const domains = [
+                    "example.com", "wikipedia.org", "github.com", 
+                    "stackoverflow.com", "medium.com", "dev.to",
+                    "blog.site.com", "docs.tech.org", "tutorials.dev"
+                ];
+                
+                const results = [];
+                
+                for (let i = 0; i < count; i++) {
+                    const domain = domains[Math.floor(Math.random() * domains.length)];
+                    const path = `/article/${query.toLowerCase().replace(/\s+/g, '-')}-${i + 1}`;
+                    const url = `https://${domain}${path}`;
+                    
+                    results.push({
+                        title: `${this.capitalizeFirstLetter(query)} - Related Information ${i + 1}`,
+                        url,
+                        description: `This page contains information about ${query} and related topics. Learn more about ${query} and how it can be useful in various contexts.`
+                    });
+                }
+                
+                this.addResultsToDOM(results);
+            }
+            
+            addResultsToDOM(results) {
+                if (results.length === 0) {
+                    const noResults = document.createElement('div');
+                    noResults.className = 'no-results';
+                    noResults.textContent = 'No results found';
+                    this.searchResults.appendChild(noResults);
+                    return;
+                }
+                
+                results.forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item';
+                    
+                    const title = document.createElement('div');
+                    title.className = 'result-title';
+                    title.textContent = result.title;
+                    title.addEventListener('click', () => {
+                        this.addLog('info', `Navigating to: ${result.url}`);
+                    });
+                    
+                    const url = document.createElement('div');
+                    url.className = 'result-url';
+                    url.textContent = result.url;
+                    
+                    const description = document.createElement('div');
+                    description.className = 'result-description';
+                    description.textContent = result.description;
+                    
+                    resultItem.appendChild(title);
+                    resultItem.appendChild(url);
+                    resultItem.appendChild(description);
+                    
+                    this.searchResults.appendChild(resultItem);
+                });
+            }
+            
+            capitalizeFirstLetter(string) {
+                return string.split(' ').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1)
+                ).join(' ');
+            }
+            
+            simulateRequest() {
+                if (!this.proxyActive) return;
+                
+                const endpoints = [
+                    'GET /api/users',
+                    'POST /api/auth/login',
+                    'GET /assets/images/banner.jpg',
+                    'GET /api/products',
+                    'PUT /api/users/profile',
+                    'DELETE /api/cache',
+                    'GET /auth/verify',
+                    'POST /api/feedback'
+                ];
+                
+                const endpoint = endpoints[Math.floor(Math.random() * endpoints.length)];
+                const responseTime = 50 + Math.floor(Math.random() * 200);
+                const statusCode = Math.random() > 0.9 ? (Math.random() > 0.5 ? 404 : 500) : 200;
+                const cached = Math.random() > 0.7;
+                
+                if (cached) this.cacheHits++;
+                this.requests++;
+                this.responseTimes.push(responseTime);
+                
+                if (this.responseTimes.length > 100) {
+                    this.responseTimes = this.responseTimes.slice(-100);
+                }
+                
+                const logType = statusCode === 200 ? 'info' : 'error';
+                const cacheStatus = cached ? ' [CACHED]' : '';
+                this.addLog(logType, `${endpoint} ${statusCode} ${responseTime}ms${cacheStatus}`);
+            }
+            
+            generateRandomEvent() {
+                if (!this.proxyActive) return;
+                
+                const events = [
+                    { type: 'info', message: 'Worker thread started' },
+                    { type: 'info', message: 'Cache size optimized' },
+                    { type: 'debug', message: 'Connection pool recycled' },
+                    { type: 'warning', message: 'High latency detected on cdn.example.com' },
+                    { type: 'warning', message: 'Rate limit approaching for API requests' },
+                    { type: 'error', message: 'Failed to connect to auth.example.com, retrying...' },
+                    { type: 'info', message: 'Updated route configuration' },
+                    { type: 'debug', message: 'Garbage collection triggered' },
+                    { type: 'info', message: 'Reusing existing connection' }
+                ];
+                
+                const event = events[Math.floor(Math.random() * events.length)];
+                this.addLog(event.type, event.message);
+            }
+            
+            generateInitialLogs() {
+                this.addLog('info', 'Scramjet proxy starting...');
+                this.addLog('info', 'Loading configuration from config.js');
+                this.addLog('info', 'Initializing worker threads');
+                this.addLog('info', 'Setting up proxy routes');
+                this.addLog('info', 'Connecting to backend services');
+                this.addLog('info', 'Enabling request compression');
+                this.addLog('info', 'Cache system initialized');
+                this.addLog('info', 'Proxy started successfully, listening on port 3000');
+                this.addLog('info', 'Ready to process requests');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            window.scramjetUI = new ScramjetUI();
+        });
+        
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            window.scramjetUI = new ScramjetUI();
+        }
+    </script>
+</body>
+</html>
