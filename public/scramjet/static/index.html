@@ -567,10 +567,10 @@ iframe {
         </div>
     </div> <!-- Hours spent here on the html: 20 min | surprisingly easy -->
 
-    <script src="https://cdn.jsdelivr.net/npm/dreamland"></script>
-    <script src="/scramjet/baremux/index.js"></script>
-    <script src="/scramjet/static/scram/scramjet.controller.js"></script>
-    <script src="/scramjet/static/config.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/dreamland"></script>
+	<script src="/scramjet/static/config.js"></script>
+	<script src="/scramjet/baremux/index.js"></script>
+	<script src="/scramjet/static/scram/scramjet.controller.js"></script>
     
     <script> //here we go.
         class ScramjetUI {
@@ -606,32 +606,38 @@ iframe {
                 this.initScramjet();
             }
             
-            initScramjet() {  //scwamjet uwu.  im never saying that shit ever again
-                if (window.ScramjetController) {
-                    window.ScramjetController.init({
-                        logCallback: (type, message) => this.addLog(type, message),
-                        statusCallback: (status) => {
-                            this.proxyActive = status.active;
-                            this.toggleButton.textContent = this.proxyActive ? 'Pause Proxy' : 'Resume Proxy'; // Anger button
-                            const statusDot = document.querySelector('.status-dot');
-                            statusDot.style.backgroundColor = this.proxyActive ? '#4caf50' : '#f44336';
-                            document.querySelector('.proxy-status').childNodes[1].textContent = this.proxyActive ? 'Active' : 'Paused';
-                        },
-                        statsCallback: (stats) => {
-                            this.requests = stats.requests;
-                            this.cacheHits = stats.cacheHits;
-                            this.responseTimes = stats.responseTimes;
-                            this.updateStats();
-                        },
-                        routeCallback: (routes) => {
-                            this.updateRoutes(routes);
-                        }
-                    });
-                    this.addLog('info', 'Scramjet controller initialized'); // smart ass sounding words
-                } else {
-                    this.addLog('error', 'Scramjet controller not found'); // if you get this error you dun fucked up
-                }
+            initScramjet() { // Had to redo it.   fuck indentation
+		    if (typeof window.ScramjetController !== 'undefined') {
+        setTimeout(() => {
+            if (window.ScramjetController && window.ScramjetController.init) {
+                window.ScramjetController.init({
+                    logCallback: (type, message) => this.addLog(type, message),
+                    statusCallback: (status) => {
+                        this.proxyActive = status.active;
+                        this.toggleButton.textContent = this.proxyActive ? 'Pause Proxy' : 'Resume Proxy';
+                        const statusDot = document.querySelector('.status-dot');
+                        statusDot.style.backgroundColor = this.proxyActive ? '#4caf50' : '#f44336';
+                        document.querySelector('.proxy-status').childNodes[1].textContent = this.proxyActive ? 'Active' : 'Paused';
+                    },
+                    statsCallback: (stats) => {
+                        this.requests = stats.requests;
+                        this.cacheHits = stats.cacheHits;
+                        this.responseTimes = stats.responseTimes;
+                        this.updateStats();
+                    },
+                    routeCallback: (routes) => {
+                        this.updateRoutes(routes);
+                    }
+                });
+                this.addLog('info', 'Scramjet controller initialized');
+            } else {
+                this.addLog('error', 'Scramjet controller API not ready');
             }
+        }, 100);
+    } else {
+        this.addLog('error', 'Scramjet controller not found');
+    }
+}
             
             updateRoutes(routes) {
                 const routesContainer = document.querySelector('.sidebar-section:first-child');
