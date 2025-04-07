@@ -568,9 +568,9 @@ iframe {
     </div> <!-- Hours spent here on the html: 20 min | surprisingly easy -->
 
 	<script src="https://cdn.jsdelivr.net/npm/dreamland"></script>
-	<script src="/scramjet/static/config.js"></script>
-	<script src="/scramjet/baremux/index.js"></script>
-	<script src="/scramjet/static/scram/scramjet.controller.js"></script>
+	<script src="/scramjet/static/config.js" defer></script>
+	<script src="/scramjet/baremux/index.js" defer></script>
+	<script src="/scramjet/static/scram/scramjet.controller.js" defer></script>
     
     <script> //here we go.
         class ScramjetUI {
@@ -606,18 +606,29 @@ iframe {
                 this.initScramjet();
             }
             
-            initScramjet() { // Had to redo it.   fuck indentation
-		    if (typeof window.ScramjetController !== 'undefined') {
-        setTimeout(() => {
-            if (window.ScramjetController && window.ScramjetController.init) {
+            						
+		initScramjet() {
+    // haha space
+		    // FUCKING INDENTATION GODDAMN
+    const maxAttempts = 10; // Max attempttttttttttttttttttttttttttttt
+    const retryDelay = 200; // retry ts
+    let attempts = 0;
+    
+    const tryInitialization = () => {
+        attempts++; // posible fix
+        if (window.ScramjetController && typeof window.ScramjetController.init === 'function') {
+            try {
                 window.ScramjetController.init({
-                    logCallback: (type, message) => this.addLog(type, message),
+                    logCallback: (type, message) => {
+                        this.addLog(type, message);
+                    },
                     statusCallback: (status) => {
                         this.proxyActive = status.active;
                         this.toggleButton.textContent = this.proxyActive ? 'Pause Proxy' : 'Resume Proxy';
                         const statusDot = document.querySelector('.status-dot');
                         statusDot.style.backgroundColor = this.proxyActive ? '#4caf50' : '#f44336';
-                        document.querySelector('.proxy-status').childNodes[1].textContent = this.proxyActive ? 'Active' : 'Paused';
+                        document.querySelector('.proxy-status').childNodes[1].textContent = 
+                            this.proxyActive ? 'Active' : 'Paused';
                     },
                     statsCallback: (stats) => {
                         this.requests = stats.requests;
@@ -629,14 +640,28 @@ iframe {
                         this.updateRoutes(routes);
                     }
                 });
-                this.addLog('info', 'Scramjet controller initialized');
-            } else {
-                this.addLog('error', 'Scramjet controller API not ready');
+                
+                this.addLog('info', 'Scramjet controller successfully initialized');
+                return;
+            } catch (initError) {
+                this.addLog('error', `Controller initialization failed: ${initError.message}`);
             }
-        }, 100);
-    } else {
-        this.addLog('error', 'Scramjet controller not found');
-    }
+        }
+        if (attempts < maxAttempts) { // Aw shit
+            this.addLog('debug', `Retrying controller initialization (attempt ${attempts}/${maxAttempts})`);
+            setTimeout(tryInitialization, retryDelay);
+        } else {
+            this.addLog('error', 'Scramjet controller failed to initialize after maximum attempts');
+            this.addLog('info', 'Running in limited functionality mode');
+            this.proxyActive = true;
+            this.toggleButton.textContent = 'Pause Proxy';
+            const statusDot = document.querySelector('.status-dot');
+            statusDot.style.backgroundColor = '#4caf50';
+            document.querySelector('.proxy-status').childNodes[1].textContent = 'Active (Limited)';
+        }
+    };
+    this.addLog('info', 'Starting Scramjet controller initialization...');
+    setTimeout(tryInitialization, 0);
 }
             
             updateRoutes(routes) {
