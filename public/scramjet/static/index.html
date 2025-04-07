@@ -101,3 +101,810 @@ iframe {
 	</body>
 </html> -->
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scramjet</title>
+    <link rel="icon" href="favicon.png"/> <!-- Convert to da png -->
+    <link rel="prefetch" href="/scram/scramjet.worker.js" />
+    <link rel="prefetch" href="/scram/scramjet.shared.js" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&amp;family=Inter+Tight:ital,wght@0,100..900;1,100..900&amp;family=Inter:wght@100..900&amp;display=swap&amp;" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" />
+    <style>
+        body, html {
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            overflow: hidden;
+            color: #fff;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        @keyframes fade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            animation: fade 0.5s ease-in-out;
+        }
+        .top-half {
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 2px solid #444;
+            overflow: hidden;
+        }
+        .bottom-half {
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .search-container {
+            background: #111;
+            padding: 8px 16px;
+            border-bottom: 1px solid #222;
+            display: flex;
+            align-items: center;
+        }
+        .search-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 24px;
+            padding: 8px 16px;
+            margin: 8px 0;
+        }
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+        .search-button {
+            background: transparent;
+            border: none;
+            color: #4285f4;
+            font-weight: 500;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+        .search-button:hover {
+            background: rgba(66, 133, 244, 0.1);
+        }
+        .search-results {
+            flex: 1;
+            background: #0f0f0f;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .result-item {
+            margin-bottom: 16px;
+            animation: fade 0.3s ease-in-out;
+        }
+        .result-title {
+            color: #8ab4f8;
+            font-size: 18px;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+        .result-title:hover {
+            text-decoration: underline;
+        }
+        .result-url {
+            color: #5f6368;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .result-description {
+            color: #bdc1c6;
+            font-size: 14px;
+        }
+        .no-results {
+            color: #bdc1c6;
+            text-align: center;
+            padding: 16px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            background: #111111;
+            border-bottom: 1px solid #222;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        .logo img {
+            height: 24px;
+            margin-right: 10px;
+        }
+        .proxy-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .proxy-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4caf50;
+        }
+        .button {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #eee;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        .button:hover {
+            background: #2a2a2a;
+        }
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 220px;
+            background: #0a0a0a;
+            border-right: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar-section {
+            padding: 12px;
+        }
+        .sidebar-title {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            padding: 0 4px;
+        }
+        .proxy-item {
+            padding: 6px 8px;
+            background: #111;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .proxy-item:hover {
+            background: #1a1a1a;
+        }
+        .proxy-item.active {
+            background: #2a2a2a;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .proxy-log {
+            flex: 1;
+            background: #0d0d0d;
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 12px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #ddd;
+        }
+        .log-entry {
+            margin-bottom: 3px;
+            display: flex;
+        }
+        .log-timestamp {
+            color: #888;
+            margin-right: 8px;
+            flex-shrink: 0;
+            width: 80px;
+        }
+        .log-type {
+            flex-shrink: 0;
+            width: 60px;
+            margin-right: 8px;
+        }
+        .log-type.info {
+            color: #4caf50;
+        }
+        .log-type.warning {
+            color: #ff9800;
+        }
+        .log-type.error {
+            color: #f44336;
+        }
+        .log-type.debug {
+            color: #2196f3;
+        }
+        .log-message {
+            word-break: break-word;
+        }
+        .input-container {
+            padding: 8px 12px;
+            background: #0f0f0f;
+            border-top: 1px solid #222;
+            display: flex;
+            align-items: center;
+        }
+        .input-field {
+            flex: 1;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 8px 10px;
+            border-radius: 4px;
+            outline: none;
+            font-size: 0.85rem;
+        }
+        .input-field:focus {
+            border-color: #555;
+        }
+        .send-btn {
+            margin-left: 8px;
+            background: #2a2a2a;
+            border: none;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+        .send-btn:hover {
+            background: #3a3a3a;
+        }
+        .status-bar {
+            padding: 6px 12px;
+            background: #111;
+            border-top: 1px solid #222;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #888;
+            align-items: center;
+        }
+        .tabs {
+            display: flex;
+            background: #0f0f0f;
+            border-bottom: 1px solid #222;
+            padding: 0 8px;
+        }
+        .tab {
+            padding: 8px 12px;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        .tab:hover {
+            color: #ccc;
+        }
+        .tab.active {
+            color: #fff;
+            border-bottom-color: #4caf50;
+        }
+        .stats-container {
+            display: flex;
+            gap: 16px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .stat-value {
+            color: #ccc;
+        }
+        .resizer {
+            height: 6px;
+            background: #222;
+            cursor: ns-resize;
+            position: relative;
+        }
+        .resizer:hover {
+            background: #444;
+        }
+        .resizer::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 2px;
+            background: #666;
+        }
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: 180px;
+                border-right: none;
+                border-bottom: 1px solid #222;
+            }
+            .top-half, .bottom-half {
+                height: auto;
+            }
+            #app {
+                height: auto;
+                min-height: 100vh;
+            }
+        } /* Hours spent here:  like 1/2 */
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="top-half" id="top-section">
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="search-input" placeholder="Search the web or proxy logs..." />
+                    <button class="search-button" id="search-button">Search</button>
+                </div>
+            </div>
+            <div class="search-results" id="search-results">
+                <div class="no-results">Enter a search query to begin</div>
+            </div>
+        </div>
+        
+        <div class="resizer" id="resizer"></div>
+        
+        <div class="bottom-half" id="bottom-section">
+            <div class="header">
+                <div class="logo">
+                    <img src="favicon.webp" alt="Scramjet Logo" /> Scramjet
+                </div>
+                <div class="proxy-controls">
+                    <div class="proxy-status">
+                        <span class="status-dot"></span>
+                        Active
+                    </div>
+                    <button class="button" id="toggle-proxy">Pause Proxy</button>
+                    <button class="button" id="clear-logs">Clear Logs</button>
+                </div>
+            </div>
+
+            <div class="main-container">
+                <div class="sidebar">
+                    <div class="sidebar-section">
+                        <div class="sidebar-title">Proxy Routes</div>
+                        <div class="proxy-item active" id="default-route">
+                            Default Route
+                        </div>
+                        <div class="proxy-item" id="add-route">
+                            Add New Route...
+                        </div>
+                    </div>
+                    <div class="sidebar-section">
+                        <div class="sidebar-title">Settings</div>
+                        <div class="proxy-item" id="cache-settings">
+                            Cache Configuration
+                        </div>
+                        <div class="proxy-item" id="throttle-settings">
+                            Request Throttling
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <div class="tabs">
+                        <div class="tab active">Logs</div> <!-- Logs!  I know damn well this is gonna take forever in JS.  -->
+                        <div class="tab">Requests</div>
+                        <div class="tab">Performance</div>
+                    </div>
+
+                    <div class="proxy-log" id="log-container"></div>
+
+                    <div class="input-container">
+                        <input type="text" class="input-field" placeholder="Enter command or filter logs..." id="command-input" />
+                        <button class="send-btn" id="send-command">Execute</button>
+                    </div>
+
+                    <div class="status-bar">
+                        <div class="stats-container" id="stats-display">
+                            <div class="stat-item">
+                                <span>Requests:</span>
+                                <span class="stat-value" id="request-count">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Cache Hit:</span>
+                                <span class="stat-value" id="cache-hit-ratio">0%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Avg Response:</span>
+                                <span class="stat-value" id="avg-response">0ms</span>
+                            </div>
+                        </div>
+                        <div id="uptime">Uptime: 0:00:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Hours spent here on the html: 20 min | surprisingly easy -->
+
+    <script src="https://cdn.jsdelivr.net/npm/dreamland"></script>
+    <script src="/baremux/index.js"></script>
+    <script src="/scram/scramjet.controller.js"></script>
+    <script src="config.js"></script>
+    
+    <script> //here we go.
+        class ScramjetUI {
+            constructor() {
+                this.proxyActive = true;
+                this.startTime = new Date();
+                this.requests = 0;
+                this.cacheHits = 0;
+                this.responseTimes = [];
+                this.logEntries = [];
+                this.maxLogs = 500; //this is what the clear console command will be for
+                
+                this.logContainer = document.getElementById('log-container');
+                this.commandInput = document.getElementById('command-input');
+                this.sendButton = document.getElementById('send-command');
+                this.toggleButton = document.getElementById('toggle-proxy');
+                this.clearLogsButton = document.getElementById('clear-logs');
+                this.requestCountElement = document.getElementById('request-count');
+                this.cacheHitRatioElement = document.getElementById('cache-hit-ratio');
+                this.avgResponseElement = document.getElementById('avg-response');
+                this.uptimeElement = document.getElementById('uptime');
+                this.searchInput = document.getElementById('search-input');
+                this.searchButton = document.getElementById('search-button');
+                this.searchResults = document.getElementById('search-results');
+                this.resizer = document.getElementById('resizer');
+                this.topSection = document.getElementById('top-section');
+                this.bottomSection = document.getElementById('bottom-section');
+                this.tabs = document.querySelectorAll('.tab');
+                
+                this.setupEventListeners();
+                this.updateStats();
+                this.startTimers();
+                this.initScramjet();
+            }
+            
+            initScramjet() {  //scwamjet uwu.  im never saying that shit ever again
+                if (window.ScramjetController) {
+                    window.ScramjetController.init({
+                        logCallback: (type, message) => this.addLog(type, message),
+                        statusCallback: (status) => {
+                            this.proxyActive = status.active;
+                            this.toggleButton.textContent = this.proxyActive ? 'Pause Proxy' : 'Resume Proxy'; // Anger button
+                            const statusDot = document.querySelector('.status-dot');
+                            statusDot.style.backgroundColor = this.proxyActive ? '#4caf50' : '#f44336';
+                            document.querySelector('.proxy-status').childNodes[1].textContent = this.proxyActive ? 'Active' : 'Paused';
+                        },
+                        statsCallback: (stats) => {
+                            this.requests = stats.requests;
+                            this.cacheHits = stats.cacheHits;
+                            this.responseTimes = stats.responseTimes;
+                            this.updateStats();
+                        },
+                        routeCallback: (routes) => {
+                            this.updateRoutes(routes);
+                        }
+                    });
+                    this.addLog('info', 'Scramjet controller initialized'); // smart ass sounding words
+                } else {
+                    this.addLog('error', 'Scramjet controller not found'); // if you get this error you dun fucked up
+                }
+            }
+            
+            updateRoutes(routes) {
+                const routesContainer = document.querySelector('.sidebar-section:first-child');
+                routesContainer.innerHTML = `
+                    <div class="sidebar-title">Proxy Routes</div>
+                    ${routes.map(route => `
+                        <div class="proxy-item ${route.active ? 'active' : ''}" data-route="${route.path}">
+                            ${route.path} → ${route.target}
+                        </div>
+                    `).join('')}
+                    <div class="proxy-item" id="add-route">
+                        Add New Route...
+                    </div>
+                `; //let's act like i care about this
+                
+                document.querySelectorAll('.proxy-item').forEach(item => {
+                    item.addEventListener('click', () => this.handleRouteClick(item));
+                });
+            }
+            
+            handleRouteClick(item) {
+                if (item.id === 'add-route') {
+                    this.addLog('info', 'Opening route editor');
+                    if (window.ScramjetController && window.ScramjetController.openRouteEditor) { //more scramjet shit
+                        window.ScramjetController.openRouteEditor();
+                    }
+                    return;
+                }
+                
+                const routePath = item.dataset.route;
+                if (window.ScramjetController && window.ScramjetController.selectRoute) {
+                    window.ScramjetController.selectRoute(routePath);
+                }
+                
+                document.querySelectorAll('.proxy-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                item.classList.add('active');
+            }
+            
+            setupEventListeners() {
+                this.sendButton.addEventListener('click', () => this.executeCommand());
+                this.commandInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.executeCommand();
+                });
+                this.toggleButton.addEventListener('click', () => this.toggleProxy());
+                this.clearLogsButton.addEventListener('click', () => this.clearLogs());
+                
+                this.tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        this.tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        this.addLog('info', `Switched to ${tab.textContent} view`);
+                    });
+                });
+                
+                document.getElementById('cache-settings').addEventListener('click', () => { 
+                    this.addLog('info', 'Opening cache settings');
+                    if (window.ScramjetController && window.ScramjetController.openCacheSettings) {
+                        window.ScramjetController.openCacheSettings();
+                    }
+                });
+                
+                document.getElementById('throttle-settings').addEventListener('click', () => {
+                    this.addLog('info', 'Opening throttle settings');
+                    if (window.ScramjetController && window.ScramjetController.openThrottleSettings) {
+                        window.ScramjetController.openThrottleSettings();
+                    }
+                });
+                
+                this.searchButton.addEventListener('click', () => this.performSearch());
+                this.searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.performSearch();
+                });
+                
+                let isResizing = false; //might change soon
+                let startY;
+                let startTopHeight;
+                
+                this.resizer.addEventListener('mousedown', (e) => {
+                    isResizing = true;
+                    startY = e.clientY;
+                    startTopHeight = this.topSection.offsetHeight;
+                    
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', () => {
+                        isResizing = false;
+                        document.removeEventListener('mousemove', onMouseMove);
+                    }, { once: true });
+                });
+                
+                const onMouseMove = (e) => { // yuhh
+                    if (!isResizing) return;
+                    const deltaY = e.clientY - startY;
+                    const newTopHeight = startTopHeight + deltaY;
+                    const containerHeight = this.topSection.parentElement.offsetHeight;
+                    if (newTopHeight < 100 || newTopHeight > containerHeight - 100) return;
+                    const topPercent = (newTopHeight / containerHeight) * 100;
+                    const bottomPercent = 100 - topPercent;
+                    this.topSection.style.height = `${topPercent}%`;
+                    this.bottomSection.style.height = `${bottomPercent}%`;
+                };
+            }
+            
+            startTimers() {
+                setInterval(() => this.updateStats(), 2000);
+            }
+            
+            updateStats() {
+                this.requestCountElement.textContent = this.requests;
+                const hitRatio = this.requests > 0 ? Math.round((this.cacheHits / this.requests) * 100) : 0;
+                this.cacheHitRatioElement.textContent = `${hitRatio}%`;
+                const avgTime = this.responseTimes.length > 0 
+                    ? Math.round(this.responseTimes.reduce((a, b) => a + b, 0) / this.responseTimes.length) 
+                    : 0;
+                this.avgResponseElement.textContent = `${avgTime}ms`;
+                const now = new Date();
+                const diff = Math.floor((now - this.startTime) / 1000);
+                const hours = Math.floor(diff / 3600);
+                const minutes = Math.floor((diff % 3600) / 60);
+                const seconds = diff % 60;
+                this.uptimeElement.textContent = `Uptime: ${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            addLog(type, message) {
+                const now = new Date();
+                const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                
+                const timestampSpan = document.createElement('span');
+                timestampSpan.className = 'log-timestamp';
+                timestampSpan.textContent = timestamp;
+                
+                const typeSpan = document.createElement('span');
+                typeSpan.className = `log-type ${type}`;
+                typeSpan.textContent = type.toUpperCase();
+                
+                const messageSpan = document.createElement('span');
+                messageSpan.className = 'log-message';
+                messageSpan.textContent = message;
+                
+                logEntry.appendChild(timestampSpan);
+                logEntry.appendChild(typeSpan);
+                logEntry.appendChild(messageSpan);
+                
+                this.logContainer.appendChild(logEntry);
+                this.logEntries.push({type, message, timestamp});
+                if (this.logEntries.length > this.maxLogs) {
+                    this.logEntries.shift();
+                    if (this.logContainer.children.length > this.maxLogs) {
+                        this.logContainer.removeChild(this.logContainer.children[0]);
+                    }
+                }
+                this.logContainer.scrollTop = this.logContainer.scrollHeight;
+            }
+            
+            executeCommand() { // commands will respond faster than my dad was to leave
+                const command = this.commandInput.value.trim();
+                if (!command) return;
+                
+                this.addLog('info', `> ${command}`);
+                
+                if (window.ScramjetController && typeof window.ScramjetController.processCommand === 'function') {
+                    try {
+                        const result = window.ScramjetController.processCommand(command);
+                        if (result) {
+                            this.addLog('info', result);
+                        } else {
+                            this.addLog('info', 'Command executed');
+                        }
+                    } catch (err) {
+                        this.addLog('error', `Command error: ${err.message || 'Unknown error'}`);
+                    }
+                } else {
+                    this.addLog('warning', `Command processor not available`);
+                }
+                
+                this.commandInput.value = '';
+            }
+            
+            toggleProxy() {
+                if (window.ScramjetController && typeof window.ScramjetController.toggleProxy === 'function') {
+                    window.ScramjetController.toggleProxy();
+                } else {
+                    this.proxyActive = !this.proxyActive;
+                    this.toggleButton.textContent = this.proxyActive ? 'Pause Proxy' : 'Resume Proxy';
+                    const statusDot = document.querySelector('.status-dot');
+                    statusDot.style.backgroundColor = this.proxyActive ? '#4caf50' : '#f44336';
+                    document.querySelector('.proxy-status').childNodes[1].textContent = this.proxyActive ? 'Active' : 'Paused';
+                    this.addLog(this.proxyActive ? 'info' : 'warning', `Proxy ${this.proxyActive ? 'resumed' : 'paused'}`);
+                }
+            }
+            
+            clearLogs() {
+                this.logContainer.innerHTML = '';
+                this.logEntries = [];
+                this.addLog('info', 'Logs cleared');
+            }
+            
+            performSearch() {
+                const query = this.searchInput.value.trim();
+                if (!query) return;
+                
+                this.searchResults.innerHTML = '';
+                const loadingElement = document.createElement('div');
+                loadingElement.className = 'no-results';
+                loadingElement.textContent = 'Searching...';
+                this.searchResults.appendChild(loadingElement);
+                this.addLog('info', `Search query: "${query}"`);
+                
+                if (window.ScramjetController && typeof window.ScramjetController.performSearch === 'function') {
+                    window.ScramjetController.performSearch(query, (results) => {
+                        this.displaySearchResults(results);
+                    });
+                } else {
+                    this.addLog('error', 'Search functionality not available');
+                    this.searchResults.innerHTML = '<div class="no-results">Search functionality requires Scramjet controller</div>'; // Won't need this prob bc I added scramjet.controller.js for yall bums
+                }
+            }
+            
+            displaySearchResults(results) {
+                this.searchResults.innerHTML = ''; //fucking results 
+                
+                if (!results || results.length === 0) {
+                    const noResults = document.createElement('div');
+                    noResults.className = 'no-results';
+                    noResults.textContent = 'No results found';
+                    this.searchResults.appendChild(noResults);
+                    return;
+                }
+                
+                results.forEach(result => { // I keep telling myself im about done.  The self reassurance is working less and less.
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item';
+                    
+                    const title = document.createElement('div');
+                    title.className = 'result-title';
+                    title.textContent = result.title;
+                    title.addEventListener('click', () => {
+                        this.addLog('info', `Navigating to: ${result.url}`);
+                        if (window.ScramjetController && typeof window.ScramjetController.navigate === 'function') {
+                            window.ScramjetController.navigate(result.url);
+                        }
+                    });
+                    
+                    const url = document.createElement('div');
+                    url.className = 'result-url';
+                    url.textContent = result.url;
+                    
+                    const description = document.createElement('div');
+                    description.className = 'result-description';
+                    description.textContent = result.description;
+                    
+                    resultItem.appendChild(title);
+                    resultItem.appendChild(url);
+                    resultItem.appendChild(description);
+                    this.searchResults.appendChild(resultItem);
+                });
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            window.scramjetUI = new ScramjetUI();
+        });
+        
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            window.scramjetUI = new ScramjetUI();
+        } // hours spent here:  4 1/2 (not including snacks)
+    </script>
+</body>
+</html>
