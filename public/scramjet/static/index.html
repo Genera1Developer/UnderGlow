@@ -600,81 +600,6 @@ iframe {
                 this.bottomSection = document.getElementById('bottom-section');
                 this.tabs = document.querySelectorAll('.tab');
                 
-                this.commandSystem = {
-                    commands: {
-                        help: {
-                            desc: "Show available commands",
-                            execute: () => {
-                                let helpText = "Available commands:\n";
-                                for (const [cmd, info] of Object.entries(this.commandSystem.commands)) {
-                                    helpText += `$${cmd.padEnd(10)} - ${info.desc}\n`;
-                                }
-                                this.addLog('info', helpText);
-                            }
-                        },
-                        clear: {
-                            desc: "Clear the console logs",
-                            execute: () => this.clearLogs()
-                        },
-                        toggle: {
-                            desc: "Toggle proxy on/off",
-                            execute: () => this.toggleProxy()
-                        },
-                        stats: {
-                            desc: "Show current proxy statistics",
-                            execute: () => {
-                                const stats = `Requests: ${this.requests}\n` +
-                                             `Cache hit ratio: ${this.cacheHitRatioElement.textContent}\n` +
-                                             `Avg response: ${this.avgResponseElement.textContent}`;
-                                this.addLog('info', stats);
-                            }
-                        },
-                        filter: {
-                            desc: "Filter logs by type (error, info, debug, warning)",
-                            execute: (args) => {
-                                if (!args.length) {
-                                    this.addLog('error', "Usage: $filter [error|info|debug|warning|all]");
-                                    return;
-                                }
-                                const filterType = args[0].toLowerCase();
-                                if (filterType === 'all') {
-                                    this.logContainer.querySelectorAll('.log-entry').forEach(entry => {
-                                        entry.style.display = '';
-                                    });
-                                    this.addLog('info', 'Showing all log types');
-                                } else if (['error', 'info', 'debug', 'warning'].includes(filterType)) {
-                                    this.logContainer.querySelectorAll('.log-entry').forEach(entry => {
-                                        entry.style.display = entry.querySelector(`.log-type.${filterType}`) ? '' : 'none';
-                                    });
-                                    this.addLog('info', `Showing only ${filterType} logs`);
-                                } else {
-                                    this.addLog('error', `Invalid filter type: ${filterType}`);
-                                }
-                            }
-                        },
-                        uptime: {
-                            desc: "Show proxy uptime",
-                            execute: () => {
-                                this.addLog('info', this.uptimeElement.textContent);
-                            }
-                        }
-                    },
-                    execute: (command) => {
-                        if (!command.startsWith('$')) {
-                            command = '$' + command;
-                        }
-                        const parts = command.slice(1).split(' ');
-                        const cmd = parts[0];
-                        const args = parts.slice(1);
-                        
-                        if (this.commands[cmd]) {
-                            this.commands[cmd].execute(args);
-                        } else {
-                            this.addLog('error', `Unknown command: ${cmd}. Try $help`);
-                        }
-                    }
-                };
-                
                 this.setupEventListeners();
                 this.updateStats();
                 this.startTimers();
@@ -895,32 +820,90 @@ iframe {
                 }
                 this.logContainer.scrollTop = this.logContainer.scrollHeight;
             }
-            
-            executeCommand() { // commands will respond faster than my dad was to leave
                 let command = this.commandInput.value.trim();
                 if (!command) return;
                 if (!command.startsWith('$')) {
                     command = '$' + command;
-                    this.commandInput.value = command;
                 }
-		    this.addLog('info', `> ${command}`);
                 
-                if (window.ScramjetController && typeof window.ScramjetController.processCommand === 'function') {
-                    try {
-                        const result = window.ScramjetController.processCommand(command);
-                        if (result) {
-                            this.addLog('info', result);
-                        } else {
-                            this.addLog('info', 'Command executed');
+                this.addLog('info', `> ${command}`);
+                this.commandInput.value = ''; // Clear da hoe
+                const parts = command.slice(1).split(' ');
+                const cmd = parts[0];
+                const args = parts.slice(1);
+                switch(cmd.toLowerCase()) {
+                    case 'help':
+                        const helpText = [
+                            "Available commands:",
+                            "$help - Show this help",
+                            "$clear - Clear logs",
+                            "$toggle - Toggle proxy",
+                            "$stats - Show stats",
+                            "$filter [type] - Filter logs (error,info,debug,warning,all)",
+                            "$uptime - Show uptime"
+                        ].join('\n');
+                        this.addLog('info', helpText);
+                        break;
+                        
+                    case 'clear':
+                        this.clearLogs();
+                        break;
+                        
+                    case 'toggle':
+                        this.toggleProxy();
+                        break;
+                        
+                    case 'stats':
+                        const stats = [
+                            `Requests: ${this.requests}`,
+                            `Cache hits: ${this.cacheHits}`,
+                            `Hit ratio: ${this.cacheHitRatioElement.textContent}`,
+                            `Avg response: ${this.avgResponseElement.textContent}`
+                        ].join('\n');
+                        this.addLog('info', stats);
+                        break;
+                        
+                    case 'filter':
+                        if (!args.length) {
+                            this.addLog('error', "Usage: $filter [error|info|debug|warning|all]");
+                            return;
                         }
-                    } catch (err) {
-                        this.addLog('error', `Command error: ${err.message || 'Unknown error'}`);
-                    }
-                } else {
-                    this.commandSystem.execute(command);
+                        const filterType = args[0].toLowerCase();
+                        if (filterType === 'all') {
+                            this.logContainer.querySelectorAll('.log-entry').forEach(el => {
+                                el.style.display = '';
+                            });
+                            this.addLog('info', 'Showing all log types');
+                        } else if (['error','info','debug','warning'].includes(filterType)) {
+                            this.logContainer.querySelectorAll('.log-entry').forEach(el => {
+                                el.style.display = el.querySelector(`.log-type.${filterType}`) ? '' : 'none';
+                            });
+                            this.addLog('info', `Showing only ${filterType} logs`);
+                        } else {
+                            this.addLog('error', `Invalid filter type: ${filterType}`);
+                        }
+                        break;
+                        
+                    case 'uptime':
+                        this.addLog('info', this.uptimeElement.textContent);
+                        break;
+                        
+                    default:
+                        if (window.ScramjetController && typeof window.ScramjetController.processCommand === 'function') {
+                            try {
+                                const result = window.ScramjetController.processCommand(command);
+                                if (result) {
+                                    this.addLog('info', result);
+                                } else {
+                                    this.addLog('info', 'Command executed');
+                                }
+                            } catch (err) {
+                                this.addLog('error', `Command error: ${err.message || 'Unknown error'}`);
+                            }
+                        } else {
+                            this.addLog('error', `Unknown command: ${cmd}`);
+                        }
                 }
-                
-                this.commandInput.value = '';
             }
             
             toggleProxy() {
