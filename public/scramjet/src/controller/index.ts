@@ -20,11 +20,11 @@ export class ScramjetController {
 				pushsourcemapfn: "$scramjet$pushsourcemap",
 			},
 			files: {
-				wasm: "../../public/rannnnnd/scramjet.wasm.js",
-				shared: "/scramjet.shared.js",
-				worker: "/scramjet.worker.js",
-				client: "/scramjet.client.js",
-				sync: "/scramjet.sync.js",
+				wasm: "/scramjet.wasm.js",
+				shared: "../../static/scram/scramjet.shared.js",
+				worker: "../../static/scram/scramjet.worker.js",
+				client: "../../static/scram/scramjet.client.js",
+				sync: "../../static/scram/scramjet.sync.js",
 			},
 			flags: {
 				serviceworkers: false,
