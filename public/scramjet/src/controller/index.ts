@@ -20,7 +20,7 @@ export class ScramjetController {
 				pushsourcemapfn: "$scramjet$pushsourcemap",
 			},
 			files: {
-				wasm: "/scramjet.wasm.js",
+				wasm: "../../public/rannnnnd/scramjet.wasm.js",
 				shared: "/scramjet.shared.js",
 				worker: "/scramjet.worker.js",
 				client: "/scramjet.client.js",
