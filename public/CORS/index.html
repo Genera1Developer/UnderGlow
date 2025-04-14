@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel=stylesheet src="../style.css">
+  <link rel=stylesheet src="../../style.css">
   <meta charset="UTF-8">
   <title>Bing | How to make my teacher happy</title>
 </head>
@@ -16,14 +16,13 @@
     document.getElementById("searchForm").addEventListener("submit", function (e) {
       e.preventDefault();
       const input = document.getElementById("queryInput").value.trim();
-      const corsKey = "5d6e336a"; // hardcode da hoe
       let targetUrl;
       if (input.startsWith("http://") || input.startsWith("https://")) {
         targetUrl = input;
       } else {
         targetUrl = "https://duckduckgo.com/?q=" + encodeURIComponent(input); //fucka yea duckduckgo      
       }
-      const proxyUrl = `/api/flow.js?q=https://corsproxy.io/?key=${corsKey}&url=${encodeURIComponent(targetUrl)}`; //cors is mid but its still a proxy
+      const proxyUrl = `/api/flow.js?q=https://corsproxy.io/?key=5d6e336a&url=${encodeURIComponent(targetUrl)}`; //cors is mid but its still a proxy
       window.location.href = proxyUrl; //yes it goes through my proxy bc 1.  It will still work as it should, and 2.  Taking all of herokuu is too much work.
     });
   </script>
