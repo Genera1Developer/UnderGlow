@@ -9,6 +9,28 @@
     <link rel="icon" href="assets/d.png">
     <script defer data-domain="underglow-testing91758603916.vercel.app" src="https://plausible.io/js/script.hash.outbound-links.tagged-events.js"></script>
     <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+    <style>
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .webview {
+            width: 100%;
+            height: 100%;
+            border: none;
+            flex: 1;
+        }
+        .new-tab-page {
+            display: none;
+            height: 100%;
+        }
+        .new-tab-page.active {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body class="dark-theme">
     <div class="browser-container">
@@ -31,7 +53,6 @@
                 <button id="home-btn" class="nav-btn" title="Home">
                     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                 </button>
-                
                 <div class="url-bar-container">
                     <input type="text" id="url-bar" class="url-bar" placeholder="Search or enter website address">
                     <div class="url-bar-icons">
@@ -40,7 +61,6 @@
                         </button>
                     </div>
                 </div>
-                
                 <button id="menu-btn" class="nav-btn" title="Menu">
                     <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
                 </button>
@@ -58,7 +78,7 @@
         </div>
 
         <div class="content-area">
-            <iframe id="webview" class="webview active" src="about:blank" frameborder="0"></iframe>
+            <iframe id="webview" class="webview" src="about:blank"></iframe>
             <div id="new-tab-page" class="new-tab-page active">
                 <div class="ntp-logo">UnderGlow</div>
                 <div class="search-container">
@@ -80,87 +100,15 @@
                             <div class="link-icon">RH</div>
                             <div class="link-title">Rammerhead</div>
                         </a>
-                        <a href="index.html" class="quick-link">
-                            <div class="link-icon">UG</div>
-                            <div class="link-title">UnderGlow</div>
-                        </a>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="status-bar">
-            <div class="status-text"></div>
-            <div class="zoom-controls">
-                <button class="zoom-btn" id="zoom-out">-</button>
-                <span class="zoom-level">100%</span>
-                <button class="zoom-btn" id="zoom-in">+</button>
-            </div>
-        </div>
-    </div>
-    <div id="tab-context-menu" class="context-menu">
-        <div class="menu-item" data-action="close">Close Tab</div>
-        <div class="menu-item" data-action="close-others">Close Other Tabs</div>
-        <div class="menu-item" data-action="reload">Reload Tab</div>
-    </div>
-    <div id="page-context-menu" class="context-menu">
-        <div class="menu-item" data-action="back">Back</div>
-        <div class="menu-item" data-action="forward">Forward</div>
-        <div class="menu-item" data-action="reload">Reload</div>
-        <div class="menu-item" data-action="bookmark">Bookmark Page</div>
-        <div class="menu-item" data-action="inspect">Inspect Element</div>
-    </div>
-    <div id="settings-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Settings</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="settings-section">
-                    <h3>Appearance</h3>
-                    <div class="setting-option">
-                        <label>Theme:</label>
-                        <select id="theme-selector">
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                            <option value="system">System</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <h3>Search Engine</h3>
-                    <div class="setting-option">
-                        <label>Default Search Engine:</label>
-                        <select id="search-engine-selector">
-                            <option value="searx">Searx (Default)</option>
-                            <option value="google">Google</option>
-                            <option value="bing">Bing</option>
-                            <option value="duckduckgo">DuckDuckGo</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <h3>Proxy</h3>
-                    <div class="setting-option">
-                        <label>
-                            <input type="checkbox" id="enable-proxy" checked>
-                            Route all traffic through UnderGlow proxy
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="save-settings">Save Settings</button>
             </div>
         </div>
     </div>
 
     <script>
         function navigateToUrl(url) {
-            const isUrl = url.includes('.') && 
-                (/^(https?:\/\/)/.test(url) || 
-                 /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(\/.*)?$/i.test(url));
-            
+            const isUrl = url.includes('.') && (/^(https?:\/\/)/.test(url) || /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(\/.*)?$/i.test(url));
             let finalUrl = url;
             if (isUrl && !url.startsWith('http')) {
                 finalUrl = 'https://' + url;
@@ -170,32 +118,47 @@
             }
             const proxyUrl = `/api/flow.js?q=${encodeURIComponent(finalUrl)}`;
             document.getElementById('webview').src = proxyUrl;
+            document.getElementById('webview').classList.add('active');
+            document.getElementById('new-tab-page').classList.remove('active');
         }
+
         document.getElementById('url-bar').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 navigateToUrl(this.value.trim());
             }
         });
+
         document.getElementById('ntp-search-btn').addEventListener('click', function() {
             const query = document.getElementById('ntp-search').value.trim();
             if (query) navigateToUrl(query);
         });
+
         document.getElementById('ntp-search').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 const query = this.value.trim();
                 if (query) navigateToUrl(query);
             }
         });
+
         document.getElementById('home-btn').addEventListener('click', function() {
             document.getElementById('webview').classList.remove('active');
             document.getElementById('new-tab-page').classList.add('active');
         });
+
+        document.getElementById('refresh-btn').addEventListener('click', function() {
+            const webview = document.getElementById('webview');
+            if (webview.classList.contains('active')) {
+                webview.src = webview.src;
+            }
+        });
+
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
             });
-            });
+        });
+
         document.getElementById('new-tab-btn').addEventListener('click', function() {
             document.getElementById('webview').classList.remove('active');
             document.getElementById('new-tab-page').classList.add('active');
