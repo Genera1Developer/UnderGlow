@@ -1,0 +1,95 @@
+:root {
+    /* AHHHH MY EYES Theme */
+    --light-toolbar-bg: #f1f1f1;
+    --light-tabbar-bg: #e8e8e8;
+    --light-tab-bg: #e0e0e0;
+    --light-tab-active-bg: #ffffff;
+    --light-urlbar-bg: #ffffff;
+    --light-ntp-bg: #ffffff;
+    --light-statusbar-bg: #f1f1f1;
+    --light-menu-bg: #ffffff;
+    --light-modal-bg: #ffffff;
+    --light-input-bg: #ffffff;
+    --light-button-bg: #e0e0e0;
+    --light-button-hover: #d0d0d0;
+    --light-border-color: #cccccc;
+    --light-text-primary: #333333;
+    --light-text-secondary: #666666;
+    --light-icon-color: #555555;
+    --light-accent-color: #1a73e8;
+    --light-accent-hover: #1765cc;
+    --light-scrollbar-track: #f1f1f1;
+    --light-scrollbar-thumb: #c1c1c1;
+    --light-scrollbar-thumb-hover: #a8a8a8;
+
+    /* good theme */
+    --dark-toolbar-bg: #2d2d2d;
+    --dark-tabbar-bg: #252525;
+    --dark-tab-bg: #1e1e1e;
+    --dark-tab-active-bg: #333333;
+    --dark-urlbar-bg: #3c3c3c;
+    --dark-ntp-bg: #1e1e1e;
+    --dark-statusbar-bg: #252525;
+    --dark-menu-bg: #333333;
+    --dark-modal-bg: #333333;
+    --dark-input-bg: #3c3c3c;
+    --dark-button-bg: #3c3c3c;
+    --dark-button-hover: #4c4c4c;
+    --dark-border-color: #444444;
+    --dark-text-primary: #e0e0e0;
+    --dark-text-secondary: #a0a0a0;
+    --dark-icon-color: #b0b0b0;
+    --dark-accent-color: #8ab4f8;
+    --dark-accent-hover: #7aa3e6;
+    --dark-scrollbar-track: #2d2d2d;
+    --dark-scrollbar-thumb: #555555;
+    --dark-scrollbar-thumb-hover: #666666;
+}
+
+.light-theme {
+    --toolbar-bg: var(--light-toolbar-bg);
+    --tabbar-bg: var(--light-tabbar-bg);
+    --tab-bg: var(--light-tab-bg);
+    --tab-active-bg: var(--light-tab-active-bg);
+    --urlbar-bg: var(--light-urlbar-bg);
+    --ntp-bg: var(--light-ntp-bg);
+    --statusbar-bg: var(--light-statusbar-bg);
+    --menu-bg: var(--light-menu-bg);
+    --modal-bg: var(--light-modal-bg);
+    --input-bg: var(--light-input-bg);
+    --button-bg: var(--light-button-bg);
+    --button-hover: var(--light-button-hover);
+    --border-color: var(--light-border-color);
+    --text-primary: var(--light-text-primary);
+    --text-secondary: var(--light-text-secondary);
+    --icon-color: var(--light-icon-color);
+    --accent-color: var(--light-accent-color);
+    --accent-hover: var(--light-accent-hover);
+    --scrollbar-track: var(--light-scrollbar-track);
+    --scrollbar-thumb: var(--light-scrollbar-thumb);
+    --scrollbar-thumb-hover: var(--light-scrollbar-thumb-hover);
+}
+
+.dark-theme {
+    --toolbar-bg: var(--dark-toolbar-bg);
+    --tabbar-bg: var(--dark-tabbar-bg);
+    --tab-bg: var(--dark-tab-bg);
+    --tab-active-bg: var(--dark-tab-active-bg);
+    --urlbar-bg: var(--dark-urlbar-bg);
+    --ntp-bg: var(--dark-ntp-bg);
+    --statusbar-bg: var(--dark-statusbar-bg);
+    --menu-bg: var(--dark-menu-bg);
+    --modal-bg: var(--dark-modal-bg);
+    --input-bg: var(--dark-input-bg);
+    --button-bg: var(--dark-button-bg);
+    --button-hover: var(--dark-button-hover);
+    --border-color: var(--dark-border-color);
+    --text-primary: var(--dark-text-primary);
+    --text-secondary: var(--dark-text-secondary);
+    --icon-color: var(--dark-icon-color);
+    --accent-color: var(--dark-accent-color);
+    --accent-hover: var(--dark-accent-hover);
+    --scrollbar-track: var(--dark-scrollbar-track);
+    --scrollbar-thumb: var(--dark-scrollbar-thumb);
+    --scrollbar-thumb-hover: var(--dark-scrollbar-thumb-hover);
+}
