@@ -1,46 +1,204 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UnderGlow</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="icon" href="assets/d.png">
     <script defer data-domain="underglow-testing91758603916.vercel.app" src="https://plausible.io/js/script.hash.outbound-links.tagged-events.js"></script>
-<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+    <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
 </head>
-<body>
-    <h1>UnderGlow</h1>
-    <form id="searchForm">
-        <input type="text" id="searchInput" placeholder="Search or enter URL">
-        <button type="submit">Go</button>
-    </form>
-    <iframe id="iframe" src="about:blank"></iframe>
-       
-    <div class="footer"> <!-- fooger -->
-        <div class="footer-nav">
-            <a href="/ultraviolet.html"><button class="footer-button">Ultraviolet</button></a> <!-- God this shit never works -->
-            <a href="/scramjet/static"><button class="footer-button">Scramjet</button></a> <!-- Bypass for scramjet soon????????? -->
-            <a href="/rammerhead/public/index.html"><button class="footer-button">Rammerhead</button></a>
-            <a href="index.html"><button class="footer-button">Underglow</button></a>
-            <a href="/Games"><button class="footer-button">Games</button></a>
+<body class="dark-theme">
+    <div class="browser-container">
+        <header class="toolbar">
+            <div class="window-controls">
+                <button class="window-btn minimize"></button>
+                <button class="window-btn maximize"></button>
+                <button class="window-btn close"></button>
+            </div>
+            <div class="nav-controls">
+                <button id="back-btn" class="nav-btn" title="Back">
+                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                </button>
+                <button id="forward-btn" class="nav-btn" title="Forward">
+                    <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                </button>
+                <button id="refresh-btn" class="nav-btn" title="Refresh">
+                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                </button>
+                <button id="home-btn" class="nav-btn" title="Home">
+                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                </button>
+                
+                <div class="url-bar-container">
+                    <input type="text" id="url-bar" class="url-bar" placeholder="Search or enter website address">
+                    <div class="url-bar-icons">
+                        <button id="bookmark-btn" class="url-icon" title="Bookmark this page">
+                            <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <button id="menu-btn" class="nav-btn" title="Menu">
+                    <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="tab-bar">
+            <div class="tabs-container">
+                <div class="tab active" data-tab-id="1">
+                    <span class="tab-title">New Tab</span>
+                    <button class="tab-close">&times;</button>
+                </div>
+                <button id="new-tab-btn" class="new-tab-btn">+</button>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <iframe id="webview" class="webview active" src="about:blank" frameborder="0"></iframe>
+            <div id="new-tab-page" class="new-tab-page active">
+                <div class="ntp-logo">UnderGlow</div>
+                <div class="search-container">
+                    <input type="text" id="ntp-search" class="ntp-search" placeholder="Search or enter website address">
+                    <button id="ntp-search-btn">Go</button>
+                </div>
+                <div class="quick-links">
+                    <h3>Quick Links</h3>
+                    <div class="links-grid">
+                        <a href="/ultraviolet.html" class="quick-link">
+                            <div class="link-icon">UV</div>
+                            <div class="link-title">Ultraviolet</div>
+                        </a>
+                        <a href="/scramjet/static" class="quick-link">
+                            <div class="link-icon">SJ</div>
+                            <div class="link-title">Scramjet</div>
+                        </a>
+                        <a href="/rammerhead/public/index.html" class="quick-link">
+                            <div class="link-icon">RH</div>
+                            <div class="link-title">Rammerhead</div>
+                        </a>
+                        <a href="index.html" class="quick-link">
+                            <div class="link-icon">UG</div>
+                            <div class="link-title">UnderGlow</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="status-bar">
+            <div class="status-text"></div>
+            <div class="zoom-controls">
+                <button class="zoom-btn" id="zoom-out">-</button>
+                <span class="zoom-level">100%</span>
+                <button class="zoom-btn" id="zoom-in">+</button>
+            </div>
+        </div>
+    </div>
+    <div id="tab-context-menu" class="context-menu">
+        <div class="menu-item" data-action="close">Close Tab</div>
+        <div class="menu-item" data-action="close-others">Close Other Tabs</div>
+        <div class="menu-item" data-action="reload">Reload Tab</div>
+    </div>
+    <div id="page-context-menu" class="context-menu">
+        <div class="menu-item" data-action="back">Back</div>
+        <div class="menu-item" data-action="forward">Forward</div>
+        <div class="menu-item" data-action="reload">Reload</div>
+        <div class="menu-item" data-action="bookmark">Bookmark Page</div>
+        <div class="menu-item" data-action="inspect">Inspect Element</div>
+    </div>
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Appearance</h3>
+                    <div class="setting-option">
+                        <label>Theme:</label>
+                        <select id="theme-selector">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="system">System</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>Search Engine</h3>
+                    <div class="setting-option">
+                        <label>Default Search Engine:</label>
+                        <select id="search-engine-selector">
+                            <option value="searx">Searx (Default)</option>
+                            <option value="google">Google</option>
+                            <option value="bing">Bing</option>
+                            <option value="duckduckgo">DuckDuckGo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>Proxy</h3>
+                    <div class="setting-option">
+                        <label>
+                            <input type="checkbox" id="enable-proxy" checked>
+                            Route all traffic through UnderGlow proxy
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-settings">Save Settings</button>
+            </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const input = document.getElementById('searchInput').value.trim();
-            const isUrl = input.includes('.') && 
-                         (/^(https?:\/\/)/.test(input) || 
-                          /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(\/.*)?$/i.test(input));
-            let url = input;
-            if (isUrl && !input.startsWith('http')) {
-                url = 'https://' + input;
+        function navigateToUrl(url) {
+            const isUrl = url.includes('.') && 
+                (/^(https?:\/\/)/.test(url) || 
+                 /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}(\/.*)?$/i.test(url));
+            
+            let finalUrl = url;
+            if (isUrl && !url.startsWith('http')) {
+                finalUrl = 'https://' + url;
             }
             if (!isUrl) {
-            url = `https://searx.bndkt.io/search?q=${input}`; // searx on top frfr
+                finalUrl = `https://searx.bndkt.io/search?q=${encodeURIComponent(url)}`;
             }
-            const proxyUrl = `/api/flow.js?q=${encodeURIComponent(url)}`; //proxy da ho
-            document.getElementById('iframe').src = proxyUrl;
+            const proxyUrl = `/api/flow.js?q=${encodeURIComponent(finalUrl)}`;
+            document.getElementById('webview').src = proxyUrl;
+        }
+        document.getElementById('url-bar').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                navigateToUrl(this.value.trim());
+            }
+        });
+        document.getElementById('ntp-search-btn').addEventListener('click', function() {
+            const query = document.getElementById('ntp-search').value.trim();
+            if (query) navigateToUrl(query);
+        });
+        document.getElementById('ntp-search').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) navigateToUrl(query);
+            }
+        });
+        document.getElementById('home-btn').addEventListener('click', function() {
+            document.getElementById('webview').classList.remove('active');
+            document.getElementById('new-tab-page').classList.add('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+            });
+        document.getElementById('new-tab-btn').addEventListener('click', function() {
+            document.getElementById('webview').classList.remove('active');
+            document.getElementById('new-tab-page').classList.add('active');
         });
     </script>
 </body>
